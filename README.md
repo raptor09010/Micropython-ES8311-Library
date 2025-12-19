@@ -103,45 +103,53 @@ The code structure allows these features to be added later by extending the regi
 3. Reboot the device.
 
 ---
+## ES8311 Initialization Example
+```python
+from es8311 import ES8311
+# ==================================================
+# ES8311 CODEC CONFIGURATION
+# ==================================================
+codec = ES8311(scl=4, sda=5, mck=6, rate=32000)
+codec.power_on()
+codec.set_volume(70)
 
+```
 ## Basic Usage Example
 
 ```python
 from es8311 import ES8311
-from machine import Pin
-from wavplayer import WavPlayer
-import time
-
-# Enable speaker amplifier
-amp_enable = Pin(9, Pin.OUT)
-amp_enable.value(1)
-
-# Initialize codec
-codec = ES8311(
-    scl=4,
-    sda=5,
-    mck=6,
-    rate=32000
-)
-
+# ==================================================
+# ES8311 CODEC CONFIGURATION
+# ==================================================
+codec = ES8311(scl=4, sda=5, mck=6, rate=32000)
 codec.power_on()
 codec.set_volume(70)
 
-# Initialize I2S WAV player
-player = WavPlayer(
-    id=0,
-    sck_pin=Pin(14),
-    ws_pin=Pin(12),
-    sd_pin=Pin(11),
-    ibuf=40000
+    # ======= I2S CONFIGURATION =======
+SCK_PIN = 14
+WS_PIN = 12
+SD_PIN = 11
+I2S_ID = 0
+BUFFER_LENGTH_IN_BYTES = 40000
+
+import time
+from machine import Pin
+from wavplayer import WavPlayer
+wp = WavPlayer(
+    id=I2S_ID,
+    sck_pin=Pin(SCK_PIN),
+    ws_pin=Pin(WS_PIN),
+    sd_pin=Pin(SD_PIN),
+    ibuf=BUFFER_LENGTH_IN_BYTES,
 )
 
-player.play("music-16k-16bits-mono.wav", loop=False)
 
-time.sleep(10)
-
-# Power down cleanly
+wp.play("music-16k-16bits-mono.wav", loop=False)
+time.sleep(10)  # play for 10 seconds
+ # continue playing to the end of the WAV file
 codec.power_off()
+from machine import SPI, Pin, PWM, ADC, RTC, deepsleep
+deepsleep()
 ```
 
 ---
